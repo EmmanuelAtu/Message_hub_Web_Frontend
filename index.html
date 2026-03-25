@@ -198,6 +198,21 @@
       margin-bottom: 16px;
       display: none;
     }
+    .password-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .toggle-password {
+      position: absolute;
+      right: 12px;
+      cursor: pointer;
+      font-size: 14px;
+      user-select: none;
+      color: var(--muted);
+      transition: color 0.2s;
+    }
+    .toggle-password:hover { color: var(--accent2); }
     .form-error.show { display: block; }
 
     /* ═══════════════ MAIN APP ═══════════════ */
@@ -709,7 +724,10 @@
       </div>
       <div class="form-group">
         <label>Password</label>
-        <input type="password" id="login-password" placeholder="Enter your password" />
+        <div class="password-wrapper">
+          <input type="password" id="login-password" placeholder="Enter your password" />
+          <span class="toggle-password" onclick="togglePass('login-password')">👁️</span>
+        </div>
       </div>
       <button class="btn-primary" id="login-btn" onclick="handleLogin()">Sign In</button>
     </div>
@@ -739,7 +757,17 @@
       </div>
       <div class="form-group">
         <label>Password</label>
-        <input type="password" id="signup-password" placeholder="Choose a strong password" />
+        <div class="password-wrapper">
+          <input type="password" id="signup-password" placeholder="Choose a strong password" />
+          <span class="toggle-password" onclick="togglePass('signup-password')">👁️</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Confirm Password</label>
+        <div class="password-wrapper">
+          <input type="password" id="signup-confirm-password" placeholder="Repeat your password" />
+          <span class="toggle-password" onclick="togglePass('signup-confirm-password')">👁️</span>
+        </div>
       </div>
       <button class="btn-primary" id="signup-btn" onclick="handleSignup()">Create Account</button>
     </div>
@@ -920,19 +948,28 @@
       btn.textContent = 'Sign In';
     }
   }
+  function togglePass(id) {
+    const el = document.getElementById(id);
+    el.type = el.type === 'password' ? 'text' : 'password';
+  }
 
   // ─── Signup ───────────────────────────────────────────────────────
   async function handleSignup() {
-    const name     = document.getElementById('signup-name').value.trim();
+const name     = document.getElementById('signup-name').value.trim();
     const email    = document.getElementById('signup-email').value.trim();
     const dept     = document.getElementById('signup-dept').value.trim();
     const faculty  = document.getElementById('signup-faculty').value.trim();
     const password = document.getElementById('signup-password').value;
+    const confirm  = document.getElementById('signup-confirm-password').value; // New line
     const errEl    = document.getElementById('signup-error');
     const btn      = document.getElementById('signup-btn');
 
-    if (!name || !email || !dept || !faculty || !password) {
+    if (!name || !email || !dept || !faculty || !password || !confirm) {
       showErr(errEl, 'Please fill in all fields.'); return;
+    }
+    
+    if (password !== confirm) {
+      showErr(errEl, 'Passwords do not match.'); return;
     }
 
     btn.disabled = true;
@@ -956,6 +993,10 @@
       btn.disabled = false;
       btn.textContent = 'Create Account';
     }
+  }
+  function togglePass(id) {
+    const el = document.getElementById(id);
+    el.type = el.type === 'password' ? 'text' : 'password';
   }
 
   function showErr(el, msg) {
